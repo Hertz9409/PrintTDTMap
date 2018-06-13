@@ -42,18 +42,20 @@
             "lib/TDTLayer",
             "lib/TDTAnnoLayer",
             "lib/html2canvas",
+            "esri/layers/ArcGISDynamicMapServiceLayer",
             "esri/layers/WMTSLayer",
             "esri/layers/WMTSLayerInfo",
             "esri/geometry/Extent",
             "esri/layers/TileInfo",
             "esri/SpatialReference",
+            'esri/config',
             "dijit/layout/BorderContainer",
             "dijit/layout/ContentPane",
             "dojo/domReady!",
             "lib/jquery"
         ], function (
-            Map, TDTLayer, TDTAnnoLayer, html2canvas, WMTSLayer, WMTSLayerInfo,
-            Extent, TileInfo, SpatialReference
+            Map, TDTLayer, TDTAnnoLayer, html2canvas, ArcGISDynamicMapServiceLayer, WMTSLayer, WMTSLayerInfo,
+            Extent, TileInfo, SpatialReference, esriConfig
         ) {
 
             var map = new Map("map", {
@@ -61,6 +63,10 @@
                 zoom: 3,
                 logo: false
             });
+
+            esriConfig.defaults.io.proxyUrl= "http://localhost:8080/ArcGIS-Proxy/proxy.jsp";
+
+            esriConfig.defaults.io.alwaysUseProxy= true;
 
             var tileInfo = new TileInfo({
                 "dpi": 96,
@@ -126,7 +132,9 @@
             map.addLayer(basemap);
             var annolayer = new TDTAnnoLayer();
             map.addLayer(annolayer);
-
+            var dlayer = new ArcGISDynamicMapServiceLayer("http://192.168.1.159:6080/arcgis/rest/services/JNZT/MapServer", {id: 'aa'});
+            dlayer.setVisibleLayers([1,2]);
+            map.addLayer(dlayer);
             printMap = function () {
                 var targetDom = $("#map");
                 //克隆截图区域
